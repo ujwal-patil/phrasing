@@ -1,0 +1,15 @@
+<div>
+    <% if flash[:alert].present? %>
+        <div class="alert">
+            <%= flash[:alert] %>
+        </div>
+    <% end %>
+    <h2>Import</h2>
+    <p>Upload a YAML (.yml) file following</p>
+    <%= form_tag 'upload', multipart: true, :'accept-charset' => 'UTF-8' do %>
+        <%= file_field_tag "file" %>
+        <%= submit_tag "Upload" %>
+    <% end %>
+
+    <p><b>Note:</b> You can only upload <%= accessible_edit_locales.join(', ') %> .yml files</p>
+</div>

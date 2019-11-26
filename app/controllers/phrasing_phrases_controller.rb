@@ -37,17 +37,22 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   def upload
-    number_of_changes = Phrasing::Serializer.import_yaml(params["file"].tempfile)
-    redirect_to phrasing_phrases_path, notice: "YAML file uploaded successfully! Number of phrases changed: #{number_of_changes}."
+    if authorize_upload_access?
+      number_of_changes = Phrasing::Serializer.import_yaml(File.new(@temp_locale_path))
+      redirect_to(phrasing_phrases_path, notice: "YAML file uploaded successfully! Number of phrases changed: #{number_of_changes}.")
+    else
+      redirect_to(import_export_phrasing_phrases_path, alert: "You can only upload #{accessible_edit_locales.join(', ')} .yml files")
+    end
   rescue => e
     message = if params[:file].nil?
-                'Please choose a file.'
-              else
-                'Please upload a valid YAML file.'
-              end
+      'Please choose a file.'
+    else
+      'Please upload a valid YAML file.'
+    end
 
-    flash[:alert] = "There was an error processing your upload! #{message}"
-    render action: 'import_export', status: 400
+    redirect_to(import_export_phrasing_phrases_path, alert: "There was an error processing your upload! #{message}")
+  ensure
+    FileUtils.rm(@temp_locale_path, force: true)
   end
 
   def destroy
@@ -57,6 +62,16 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   private
+
+  def authorize_upload_access?
+    @temp_locale_path = Rails.root.join('tmp/temp_locale.yml')
+    File.open(@temp_locale_path, "wb+") do |file|
+      file.puts params["file"].tempfile.read
+    end
+
+    hash = YAML.load(File.new(@temp_locale_path))
+    (accessible_edit_locales & hash.keys) == hash.keys
+  end
 
   def authorize_editor
     redirect_to root_path unless can_edit_phrases?

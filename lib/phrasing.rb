@@ -14,6 +14,14 @@ module Phrasing
   mattr_accessor :parent_controller
   @@parent_controller = "ApplicationController"
 
+  mattr_accessor :previous_text_popover
+  @@previous_text_popover = true
+
+  mattr_accessor :overriden_style
+  @@overriden_style = 'phrasing_engine_overidden'
+
+  mattr_accessor :locale_file_directory
+
   def self.setup
     yield self
   end

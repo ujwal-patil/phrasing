@@ -4,6 +4,7 @@ class CreatePhrasingPhrases < ActiveRecord::Migration<%= migration_version %>
       t.string :locale
       t.string :key
       t.text :value
+      t.string :preview_links, array: true, default: [], null: false
       t.timestamps
     end
   end

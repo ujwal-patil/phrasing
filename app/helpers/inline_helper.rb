@@ -7,16 +7,16 @@ module InlineHelper
   def phrase(*args)
     if args[0].class.in? [String, Symbol]
       key, options = args[0].to_s, (args[1] || {})
-      inline(phrasing_extract_record(key, options), :value, options)
+      inline(phrasing_extract_record(key, options), :value, options, key)
     else
       record, attribute, options = args[0], args[1], args[2]
-      inline(record, attribute, options || {})
+      inline(record, attribute, options || {}, key)
     end
   end
 
   private
 
-  def inline(record, attribute, options = {})
+  def inline(record, attribute, options = {}, key = nil)
     return uneditable_phrase(record, attribute) unless can_edit_phrases?
 
     klass  = 'phrasable'
@@ -24,10 +24,36 @@ module InlineHelper
     klass += ' ' + options[:class] if options[:class]
 
     url = phrasing_polymorphic_url(record, attribute)
+    phrase_html_id = "phrase-#{record.id}"
 
-    content_tag(:span, class: klass, spellcheck: false, 'data-url' => url) do
+    tag_options = {class: klass, spellcheck: false, 'data-url' => url,  onclick: "resetPhrasableEvent(event)", id: phrase_html_id}
+   
+    # Add Previous Text popover
+    if Phrasing.previous_text_popover
+      add_previous_text_popover(key, tag_options)
+    end
+
+    # Add Preview Link
+    update_preview_links(record, phrase_html_id)
+
+    content_tag(:i, tag_options) do
       (record.send(attribute) || record.try(:key)).to_s.html_safe
     end
+  end
+
+  def add_previous_text_popover(key, tag_options)
+    unless key.blank?
+      locale_text = I18n.t(key, raise: true) rescue nil
+      unless locale_text.nil?
+        tag_options.merge!({'data-toggle' => "popover", 'data-content' => locale_text, title: "User View Previous Text"})
+      end
+    end
+  end
+
+  def update_preview_links(record, phrase_html_id)
+    record.preview_links << "#{request.path}##{phrase_html_id}"
+    record.preview_links.uniq!
+    record.save
   end
 
   def phrasing_extract_record(key, options = {})

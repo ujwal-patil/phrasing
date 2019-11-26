@@ -30,7 +30,11 @@ class PhrasingPhrase < ActiveRecord::Base
 
     def self.search_i18n_and_create_phrase(key)
       begin
-        value = I18n.t(key, raise: true)
+        RequestStore.store[:locale_keys_and_values] ||= load_locale_file
+        value = RequestStore.store[:locale_keys_and_values]["#{I18n.locale}.#{key}"]
+
+        raise I18n::MissingTranslationData.new(I18n.locale, key) if value.nil?
+
         create_phrase(key, value)
       rescue I18n::MissingTranslationData
         create_phrase(key)
@@ -55,5 +59,34 @@ class PhrasingPhrase < ActiveRecord::Base
     def version_it
       PhrasingPhraseVersion.create_version(id, value_was) if value_was != value
     end
+
+    def load_locale_file
+      file_path = Dir[File.join(Phrasing.locale_file_directory, "*root.#{I18n.locale}.yml")].last
+
+      return {} unless File.exist?(file_path)
+
+      keys_and_values = {}
+      traverse(YAML.load_file(file_path)) do |keys, value|
+        keys_and_values[keys * '.'] = value
+      end
+
+      keys_and_values
+    end
+
+    def traverse(obj, keys = [], &block)
+      case obj
+      when Hash
+        obj.each do |k,v|
+          keys << k
+          traverse(v, keys, &block)
+          keys.pop
+        end
+      when Array
+        obj.each { |v| traverse(v, keys, &block) }
+      else
+        yield keys, obj
+      end
+    end
+
 
 end
