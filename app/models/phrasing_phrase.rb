@@ -60,7 +60,7 @@ class PhrasingPhrase < ActiveRecord::Base
       PhrasingPhraseVersion.create_version(id, value_was) if value_was != value
     end
 
-    def load_locale_file
+    def self.load_locale_file
       file_path = Dir[File.join(Phrasing.locale_file_directory, "*root.#{I18n.locale}.yml")].last
 
       return {} unless File.exist?(file_path)
@@ -73,7 +73,7 @@ class PhrasingPhrase < ActiveRecord::Base
       keys_and_values
     end
 
-    def traverse(obj, keys = [], &block)
+    def self.traverse(obj, keys = [], &block)
       case obj
       when Hash
         obj.each do |k,v|
