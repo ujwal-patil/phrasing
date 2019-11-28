@@ -17,3 +17,4 @@ gem 'rdoc'
 gem 'rspec-rails', '~> 3.7.1'
 gem 'sass'
 gem 'sqlite3', '~> 1.3.6'
+gem "kaminari"

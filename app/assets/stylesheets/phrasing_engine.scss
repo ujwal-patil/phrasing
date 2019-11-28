@@ -12,9 +12,15 @@
   padding: 10px;
 }
 
+.editable:hover:not(:focus) {
+  border: 2px dashed #037afc;
+}
+
 .filters {
   background-color: white;
-   margin-top: 66px;
+  margin-top: 66px;
+  top: 66px;
+  position: sticky;
 }
 
 .success{

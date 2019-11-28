@@ -22,7 +22,7 @@ class PhrasingPhrase < ActiveRecord::Base
       query.where(key_like.or(value_like))
     else
       # because we want to have non nil values first.
-      query.where("value is not null") + query.where("value is null")
+      query
     end
   end
 

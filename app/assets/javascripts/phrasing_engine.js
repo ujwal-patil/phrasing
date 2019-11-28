@@ -6,21 +6,23 @@ $(document).ready(function(){
 		var element = $(this),
 		  hiddenEle = $(this.dataset.textid);
 		
-		hiddenEle.val(this.innerText);
+		if (hiddenEle.val() != this.innerText) {
+			hiddenEle.val(this.innerText);
 
-	    $.ajax({
-	  	    url: this.dataset.url,
-		    type: "PUT",
-		    data: $(this.closest('form')).serialize(),
-		    success: function(response) {
-		  	    console.log("success", response)
-		   	    showCurrentStatus(element, 'success');
-		    },
-		    error: function(error){
-		  	    console.log("error", error)
-		   	    showCurrentStatus(element, 'danger');
-		    }
-		});
+		    $.ajax({
+		  	    url: this.dataset.url,
+			    type: "PUT",
+			    data: $(this.closest('form')).serialize(),
+			    success: function(response) {
+			  	    console.log("success", response)
+			   	    showCurrentStatus(element, 'success');
+			    },
+			    error: function(error){
+			  	    console.log("error", error)
+			   	    showCurrentStatus(element, 'danger');
+			    }
+			});
+		}
 	})
 });
 

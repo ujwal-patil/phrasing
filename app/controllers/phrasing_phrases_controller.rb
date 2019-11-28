@@ -100,7 +100,7 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   def phrasing_phrases
-    PhrasingPhrase.fuzzy_search(params[:search], params[:locale])
+    PhrasingPhrase.fuzzy_search(params[:search], params[:locale]).page(params[:page]).per(params[:per_page] || 100)
   end
 
 end
