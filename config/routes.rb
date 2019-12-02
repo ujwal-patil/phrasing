@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     collection do
       get  :help
       get  :import_export
+      post :request_go_live
       get  :download
       post :upload
     end

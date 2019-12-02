@@ -14,6 +14,25 @@ module InlineHelper
     end
   end
 
+  def t(key)
+    if can_edit_phrases? && !blacklisted_file_keys.include?("#{I18n.locale}.#{key}") && !Phrasing.blacklisted_keys_for_inline_edit.any?{|m| key.start_with?(m)}
+      phrase(key)
+    else
+      I18n.t(key)
+    end
+  end
+
+  def blacklisted_file_keys
+    @blacklisted_phrases_keys ||= Phrasing::Updator.new(I18n.locale).blacklisted_phrases_keys
+  end
+
+  def phrasing_preview_links(links)
+    return "-" if links.blank?
+    links.map.with_index(1) do |path, i|
+      %Q( <a href="#{path}" target="_blank" style="color: blue;font-weight: 600;">Preview-#{i}</a> )
+    end.join(', ').html_safe
+  end
+
   private
 
   def inline(record, attribute, options = {}, key = nil)

@@ -1,8 +1,9 @@
 
 
 <div class="container">
-  <div class="alert alert-dark filters">
-     <%= form_tag phrasing_phrases_path, method: :get, class: "form-inline" do %>
+  <div class="alert alert-dark filters row">
+
+     <%= form_tag phrasing_phrases_path, method: :get, class: "form-inline col-md-9 p-0" do %>
         <% locale_options = options_for_select(accessible_edit_locales.map{|l| [l,l]}, params[:locale]) %>
           <div class="form-group">
             <%= select_tag 'locale', locale_options, class: "custom-select"  %>
@@ -18,48 +19,56 @@
           <%= link_to_previous_page @phrasing_phrases, 'Previous Page', class: "btn btn-outline-primary mr-2" %>
           <%= link_to_next_page @phrasing_phrases, 'Next Page', class: "btn btn-outline-primary mr-2"  %>
 
-          
+          <%= button_tag 'Request Go Live' , type: 'button', class: "btn btn-outline-success mr-2 float-right", 'data-url': request_go_live_phrasing_phrases_path  %>
       <% end %> 
 
+      <div class="col-md-3 p-0">
+        <div class="progress mt-2">
+          <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+        </div>
+      </div>
   </div>
-  <table class="table table-hover">
-    <thead>
-      <tr style="text-align: center;">
-        <th scope="col"></th>
-        <th scope="col">Key</th>
-        <th scope="col">Value</th>
-        <th scope="col">Preview</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% @phrasing_phrases.each do |t| %>
-      <tr>
-        <td>
-          <div class="pt-2"><%= t.id %></div>
-        </td>
-        <td>
-          <div style="width: 150px;word-break: break-all;padding-top: 8px;">
-            <%= link_to t.key, edit_phrasing_phrase_path(t) %>
-          </div>
-        </td>
-        <td>
-          <%= form_for t, url: phrasing_phrase_path(t) do |f| %>
-            <%= hidden_field_tag :new_value, t.value, id: "new_text-#{t.id}" %>
-            <%= hidden_field_tag :klass, "PhrasingPhrase" %>
-            <%= hidden_field_tag :attribute, 'value' %>
+  <div class="row">
+    <table class="table table-hover">
+      <thead>
+        <tr style="text-align: center;">
+          <th scope="col"></th>
+          <th scope="col">Key</th>
+          <th scope="col">Value</th>
+          <th scope="col">Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @phrasing_phrases.each do |t| %>
+        <tr>
+          <td>
+            <div class="pt-2"><%= t.id %></div>
+          </td>
+          <td>
+            <div style="width: 150px;word-break: break-all;padding-top: 8px;">
+               <%= t.key %>
+              <%#= link_to t.key, edit_phrasing_phrase_path(t) %>
+            </div>
+          </td>
+          <td>
+            <%= form_for t, url: phrasing_phrase_path(t) do |f| %>
+              <%= hidden_field_tag :new_value, t.value, id: "new_text-#{t.id}" %>
+              <%= hidden_field_tag :klass, "PhrasingPhrase" %>
+              <%= hidden_field_tag :attribute, 'value' %>
 
-            <p id="<%= "phrase-#{t.id}" %>"
-              data-textid="<%= "#new_text-#{t.id}" %>"
-              data-url="<%= phrasing_phrase_path(t) %>" 
-              class="editable mb-0" 
-              contenteditable="true">
-              <%= t.value %>  
-            </p>
-          <% end %>
-        </td>
-        <td style="width: 200px;"><%= phrasing_preview_links(t.preview_links) %></td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
+              <p id="<%= "phrase-#{t.id}" %>"
+                data-textid="<%= "#new_text-#{t.id}" %>"
+                data-url="<%= phrasing_phrase_path(t) %>" 
+                class="editable mb-0" 
+                contenteditable="true">
+                <%= t.value %>  
+              </p>
+            <% end %>
+          </td>
+          <td style="width: 200px;"><%= phrasing_preview_links(t.preview_links) %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

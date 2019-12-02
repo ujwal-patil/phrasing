@@ -61,6 +61,10 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
     redirect_to phrasing_phrases_path, notice: "#{phrasing_phrase.key} deleted!"
   end
 
+  def request_go_live
+    # Phrasing::Updator.new(locale).request_go_live
+  end
+
   private
 
   def authorize_upload_access?

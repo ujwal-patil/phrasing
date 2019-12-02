@@ -61,7 +61,7 @@ class PhrasingPhrase < ActiveRecord::Base
     end
 
     def self.load_locale_file
-      file_path = Dir[File.join(Phrasing.locale_file_directory, "*root.#{I18n.locale}.yml")].last
+      file_path = Dir[File.join(Phrasing.locale_file_path, "*root.#{I18n.locale}.yml")].last
 
       return {} unless File.exist?(file_path)
 
