@@ -261,3 +261,39 @@ span.no-overflow {
 .url {
   -webkit-font-smoothing: antialiased;
 }
+
+
+
+i.phrasable + div.popover {
+    z-index: 9999;
+    min-width: 180px;
+
+    h3.popover-title {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #323232 !important;
+        background-color: #f7f7f7 !important;
+    }
+
+    div.popover-content {
+        font-size: 13px !important;
+        color: #323232 !important;
+        background-color: #ffffff !important;
+    }
+}
+
+i.phrasable {
+    font-style: inherit;
+}
+
+.highlite-phrase {
+    font-weight: bold;
+    background-color: yellow;
+    color: black;
+    padding: 2px 10px;
+}
+
+#phrasing-edit-mode-bubble{
+    border: 2px solid #101010ad !important;
+    box-shadow: 0 10px 16px 0 black;
+}

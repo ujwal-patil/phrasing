@@ -14,6 +14,10 @@ module InlineHelper
     end
   end
 
+  def phrasing_include_tag
+    render('phrasing/phrasing_initializer')
+  end
+
   def t(key)
     if can_edit_phrases? && !blacklisted_file_keys.include?("#{I18n.locale}.#{key}") && !Phrasing.blacklisted_keys_for_inline_edit.any?{|m| key.start_with?(m)}
       phrase(key)

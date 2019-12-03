@@ -1,0 +1,15 @@
+<% if can_edit_phrases? %>
+    <%= javascript_include_tag 'phrasing' %>
+    <%= stylesheet_link_tag "phrasing" %>
+    <%= render 'phrasing/initializer' %>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if (window.location.hash.startsWith('#phrase-')) {
+                var targetPhrase = $(window.location.hash);
+                targetPhrase.addClass('highlite-phrase');
+                $("html, body").animate({ scrollTop: targetPhrase.offset().top - 130 }, 500);
+            }
+        });
+    </script>
+<% end %>
