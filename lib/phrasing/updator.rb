@@ -51,9 +51,15 @@ module Phrasing
     # Phrasing::Updator.new(:en).create_phrases
     # Create active records for all root file keys
     # Created records will be shown on all keys list views
-    # This will not create records for keys start with whitelisted sections(Phrasing::UselessRemover::WHITELISTED_SECTIONS)
+    # This will not create records for keys start with whitelisted sections(Phrasing.whitelisted_keys_section_for_remover)
     def create_phrases
-      yml_to_keys_and_values.each do |key, value|
+      pinwheel = %w{ | / - \\ }
+      puts "Creating keys for locale : #{@locale}"
+      _keys_and_values = yml_to_keys_and_values
+      _keys_and_values.each_with_index do |(key, value), index|
+        percentage = ((index + 1).to_f / _keys_and_values.length * 100).to_i
+        print "\b" * 50, "Progress: #{percentage}% - #{index + 1}/#{_keys_and_values.length} ", pinwheel.rotate!.first
+
         _key = key.to_s.split('.')[1..-1] * '.'
         next if whitelisted?(_key)
         phrasing_phrases.find_or_initialize_by(key:  _key).tap do |pp|
@@ -61,10 +67,11 @@ module Phrasing
           pp.save
         end
       end
+      puts 'Done.'
     end
 
     def whitelisted?(key)
-      Phrasing::UselessRemover::WHITELISTED_SECTIONS.any?{|m| key.start_with?(m)}
+      Phrasing.whitelisted_keys_section_for_remover.any?{|m| key.start_with?(m)}
     end
 
     def update_as_next_root_version(keys_and_values)
@@ -123,38 +130,6 @@ module Phrasing
     def current_locale_releases
       Dir[File.join(Phrasing.locale_file_path, 'releases', "*.#{@locale}.yml")]
     end
-
-
-    def request_go_live
-      return if ENV['GIT_LOCALE_BRANCH'].blank?
-
-      begin
-        # checkout to target branch
-        `git checkout #{ENV['GIT_LOCALE_BRANCH']}`
-
-        # Pull latest code
-        `git pull origin #{ENV['GIT_LOCALE_BRANCH']}`
-
-        # Update Files to current release
-        update_files
-
-        # add updated files
-        `git add config/locales/`
-
-        # commit changes
-        `git commit -m "Locale Updator - Adding new version locale files"`
-
-        # Push to branch
-        `git push origin #{ENV['GIT_LOCALE_BRANCH']}`
-
-        return true
-      rescue Exception => e
-        Rails.logger.error("runner - #{e.message}")
-
-        return false
-      end
-    end
-
 
     private
 

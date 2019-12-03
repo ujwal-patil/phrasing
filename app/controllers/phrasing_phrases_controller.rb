@@ -41,7 +41,7 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
       number_of_changes = Phrasing::Serializer.import_yaml(File.new(@temp_locale_path))
       redirect_to(phrasing_phrases_path, notice: "YAML file uploaded successfully! Number of phrases changed: #{number_of_changes}.")
     else
-      redirect_to(import_export_phrasing_phrases_path, alert: "You can only upload #{accessible_edit_locales.join(', ')} .yml files")
+      redirect_to(import_export_phrasing_phrases_path, alert: "You can only upload #{accessible_edit_locales.map(&:to_s).join(', ')} .yml files")
     end
   rescue => e
     message = if params[:file].nil?
@@ -62,7 +62,14 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   def request_go_live
-    # Phrasing::Updator.new(locale).request_go_live
+    PhrasingJob.perform_later('en')
+    head :ok
+  end
+
+  def go_live_status
+    hh = {in_progress: Phrasing.request_in_progress?, progress: Phrasing.request_in_progress_status}
+    puts "==============#{hh}"
+    render json: hh
   end
 
   private
@@ -74,7 +81,7 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
     end
 
     hash = YAML.load(File.new(@temp_locale_path))
-    (accessible_edit_locales & hash.keys) == hash.keys
+    (accessible_edit_locales.map(&:to_s) & hash.keys) == hash.keys
   end
 
   def authorize_editor

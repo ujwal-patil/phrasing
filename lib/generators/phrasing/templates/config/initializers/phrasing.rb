@@ -30,6 +30,4 @@ Phrasing.setup do |config|
   # will not considered as useless keys, remover script will keep such keys as it is
   config.whitelisted_keys_section_for_remover = %w(activerecord)
 
-
-
 end

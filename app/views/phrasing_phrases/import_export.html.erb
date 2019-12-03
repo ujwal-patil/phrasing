@@ -11,5 +11,5 @@
         <%= submit_tag "Upload" %>
     <% end %>
 
-    <p><b>Note:</b> You can only upload <%= accessible_edit_locales.join(', ') %> .yml files</p>
+    <p><b>Note:</b> You can only upload <%= accessible_edit_locales.map(&:to_s).join(', ') %> .yml files</p>
 </div>

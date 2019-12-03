@@ -67,4 +67,23 @@ module Phrasing
   def self.whitelisted?(klass, attribute)
     allow_update_on_all_models_and_attributes == true || whitelist.include?("#{klass}.#{attribute}")
   end
+
+  def self.request_in_progress?
+    redis_with_try([]) do
+      $redis.with {|conn| conn.lrange('phrasing_in_progress', 0 , 0)}
+    end.first
+  end
+
+  def self.request_in_progress_status
+    redis_with_try([]) do
+      $redis.with {|conn| conn.lrange('phrasing_in_progress_status', 0 , 0)}
+    end.first
+  end
+
+  def self.redis_with_try(default_val = nil, &block)
+    yield
+  rescue Exception => e
+    Rails.logger.error("redis_with_try :: Exception : #{e.message}")
+    return default_val
+  end
 end
