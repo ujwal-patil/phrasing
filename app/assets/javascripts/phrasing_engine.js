@@ -36,67 +36,85 @@ function showCurrentStatus(element, klass){
 }
 
 function requestLive(){
-	var button = this;
-	var processBar = $('#live-process-bar');
-	button.disabled = true;
+	var button = this,
+			processBar = $('#live-process-bar');
+
+	disableFilters(true);
 
 	$.ajax({
-	    url: this.dataset.path,
+	  url: this.dataset.path,
     type: "GET",
-    success: function(response) {
-  	    // console.log("success", response);
-  	    showProcessBar();
-    },
+    success: showProcessBar,
     error: function(error){
-	    // console.log("error", error)
-	    button.disabled = false;
-	    processBar.hide();
+	    disableFilters(false)
     }
 	});
 
 	function showProcessBar(){
 		var message = $('#rq-message');	
 		processBar.find('div[role=progressbar]').css('width', '0%')	
-		var interval = setInterval(getStatus, 1000);
+		var interval = setInterval(showStatus, 1000);
 
-		function getStatus(){
+		function showStatus(){
 			$.ajax({
 	  	  url: '/phrasing/go_live_status',
 		    type: "get",
 		    success: function(response) {
-		  	  console.log("success", response);
+		  	  // console.log("success", response);
 					processBar.show();
-
 					processBar.find('div[role=progressbar]').css('width', response.progress +'%')
-		  	    if (response.in_progress == 'false'){
-		  	    	clearInterval(interval);
-		  	    	button.disabled = false;
+
+	  	    if (response.in_progress == 'false'){
+	  	    	clearInterval(interval);
+	  	    	disableFilters(false);
+
 		  			if (response.progress == 100) {
-		  				showMessage('Successfully Requested.', 'c-green');
+		  				showMessage('Requested Successfully, Please note Added Words: '+response.added_words+', Removed Words: '+response.removed_words, 'alert-success');
+		  				timeoutProgress();
 		  			}
 		  	  }
 		    },
 		    error: function(error){
-	  	    console.log("error", error)
+		    	disableFilters(false);
 	  	    clearInterval(interval);
-	  	    button.disabled = false;
-	  	    processBar.hide();
-	  	    showMessage('Requested Failed', 'c-red')
+	  	    showProgressBarMessage('Fail to request, retry', 'c-red')
+	  	    timeoutProgress();
 		    }
 			});
 		}
 
-		function showMessage(messageText, klass){
+		function timeoutProgress(){
+			setTimeout(function() {
+				processBar.hide();
+				message.hide();
+			}, 5000);
+		}
+
+		function showProgressBarMessage(messageText, klass){
 			message.show();
 			message.removeClass('c-red');
 			message.removeClass('c-green');
 			message.addClass(klass);
 			message[0].innerText = messageText;
+		}
+	}
 
-			setTimeout(function() {
-				processBar.hide();
-				message.hide();
-			}, 5000);
+	function disableFilters(disable){
+		var editables = $('.editable'),
+			filterAnchors = $('.filters a.btn'),
+			filterInputs = $('.filters input, .filters select');
+
+		if (disable) {
+			editables.prop('contenteditable', false);
+			button.disabled = true;
+			filterInputs.attr('disabled', true);
+			filterAnchors.css("pointer-events", "none")
+		}
+		else{
+			editables.prop('contenteditable', true);
+			button.disabled = false;
+			filterInputs.attr('disabled', false);
+			filterAnchors.css("pointer-events", "all");
 		}
 	}
 }

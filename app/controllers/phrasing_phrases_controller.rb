@@ -72,7 +72,12 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   def go_live_status
-    render json: {in_progress: Phrasing.job_status_for('phrasing_in_progress'), progress: Phrasing.job_status_for('phrasing_in_progress_status')}
+    render json: {
+      in_progress: Phrasing.job_status_for('phrasing_in_progress'), 
+      progress: Phrasing.job_status_for('phrasing_in_progress_status'),
+      removed_words: Phrasing.job_status_for('WordCounter:removed_words'),
+      added_words: Phrasing.job_status_for('WordCounter:added_words')
+    }
   end
 
   private

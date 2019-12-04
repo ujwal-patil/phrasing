@@ -1,41 +1,43 @@
 class PhrasingBaseJob < ApplicationJob
 
   def request_script
+    add_status('phrasing_in_progress_status', 0)
+    add_status('phrasing_in_progress', true)
+
   	command = lambda do |cmd, percentage|
   		puts "command=================#{cmd}, percentage: #{percentage}"
 
-  		cmd_status = if cmd.start_with?('phrasing_do_update')
-  			Phrasing::Updator.new(cmd.split(':').last).update_files rescue false
+  		if cmd.start_with?('phrasing_do_update')
+        updator_status = Phrasing::Updator.new(cmd.split(':').last).update_files
+  			if updator_status == false
+          add_status('phrasing_in_progress_status', 100)
+          add_status('phrasing_in_progress', false)
+          raise StandardError.new("Terminated as no change detected")
+        else
+          add_status('phrasing_in_progress_status', percentage)
+        end
   		else
-  			system(cmd)
+    		if system(cmd)
+          add_status('phrasing_in_progress_status', percentage)
+    		else
+    			raise StandardError.new("command failed : #{cmd}")
+    		end
+        
+        add_status('phrasing_in_progress', percentage != 100)
   		end
-
-  		if cmd_status
-  			in_progress_status!(percentage) 
-  		else
-  			raise StandardError.new("command failed : #{cmd}")
-  		end
-  		
-  		in_progress!(percentage != 100)
   	end
 
   	yield(command)
   rescue Exception => e
-  	in_progress!(false)
+    add_status('phrasing_in_progress', false)
+
     Rails.logger.error("PhrasingBaseJob :: request_script :: Exception : #{e.message}")
   end
 
-  def in_progress!(status)
+  def add_status(key, value)
   	$redis.with do |conn|
-	    conn.lpush('phrasing_in_progress', status)
-	    conn.ltrim('phrasing_in_progress', 0, 0)
-	  end
-  end
-
-  def in_progress_status!(percentage)
-  	$redis.with do |conn|
-	    conn.lpush('phrasing_in_progress_status', percentage)
-	    conn.ltrim('phrasing_in_progress_status', 0, 0)
+	    conn.lpush(key, value)
+	    conn.ltrim(key, 0, 0)
 	  end
   end
 

@@ -47,7 +47,7 @@ module Phrasing
         display_word_count
 
         # Return true for successfull execution
-        return true
+        return @word_counter.has_change?
       end
     end
 
