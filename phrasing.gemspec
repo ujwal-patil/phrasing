@@ -23,5 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency "sass"
   s.add_dependency "kaminari"
   s.add_dependency 'thor'
+  s.add_dependency 'remotipart'
 
 end
