@@ -45,6 +45,9 @@ module Phrasing
         # phrasing_phrases.delete_all
 
         display_word_count
+
+        # Return true for successfull execution
+        return true
       end
     end
 
