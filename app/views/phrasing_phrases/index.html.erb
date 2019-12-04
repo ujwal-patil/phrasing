@@ -13,7 +13,9 @@
       <%#= link_to 'Download', download_phrasing_phrases_path(search: params[:search], locale: params[:locale]), class: 'btn btn-success mb-2 mr-2' %>
       <%= link_to_previous_page @phrasing_phrases, 'Previous Page', class: "btn btn-outline-primary mr-2" %>
       <%= link_to_next_page @phrasing_phrases, 'Next Page', class: "btn btn-outline-primary mr-2"  %>
-      <%= button_tag 'Request Go Live' , type: 'button', class: "btn btn-outline-success mr-2 float-right", 'data-path': request_go_live_phrasing_phrases_path, id: 'request-live'  %>
+      <% if @phrasing_phrases.present? %>
+        <%= button_tag 'Request Go Live' , type: 'button', class: "btn btn-outline-success mr-2 float-right", 'data-path': request_go_live_phrasing_phrases_path, id: 'request-live'  %>
+      <% end %>
     <% end %>
     <div class="col-md-3 p-0">
       <div class="progress mt-2" id="live-process-bar" style="display: none;">
@@ -23,46 +25,52 @@
       <p class="m-0 pt-2 text-center" id="rq-message" style="display: none;">Successfully Requested</p>
     </div>
   </div>
-  <div class="row">
-    <table class="table table-hover">
-      <thead>
-        <tr style="text-align: center;">
-          <th scope="col"></th>
-          <th scope="col">Key</th>
-          <th scope="col">Value</th>
-          <th scope="col">Preview</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @phrasing_phrases.each do |t| %>
-          <tr>
-            <td>
-              <div class="pt-2"><%= t.id %></div>
-            </td>
-            <td>
-              <div style="width: 150px;word-break: break-all;padding-top: 8px;">
-                <%= t.key %>
-                <%#= link_to t.key, edit_phrasing_phrase_path(t) %>
-              </div>
-            </td>
-            <td>
-              <%= form_for t, url: phrasing_phrase_path(t) do |f| %>
-                <%= hidden_field_tag :new_value, t.value, id: "new_text-#{t.id}" %>
-                <%= hidden_field_tag :klass, "PhrasingPhrase" %>
-                <%= hidden_field_tag :attribute, 'value' %>
-                
-                <p id="<%= "phrase-#{t.id}" %>"
-                  data-textid="<%= "#new_text-#{t.id}" %>"
-                  data-url="<%= phrasing_phrase_path(t) %>"
-                  class="editable mb-0"
-                  contenteditable="true">
-                  <%= t.value %>
-                </p>
-              <% end %>
-            </td>
-            <td style="width: 200px;"><%= phrasing_preview_links(t.preview_links) %></td>
+  <% if @phrasing_phrases.present? %>
+    <div class="row">
+      <table class="table table-hover">
+        <thead>
+          <tr style="text-align: center;">
+            <th scope="col"></th>
+            <th scope="col">Key</th>
+            <th scope="col">Value</th>
+            <th scope="col">Preview</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          <% @phrasing_phrases.each do |t| %>
+            <tr>
+              <td>
+                <div class="pt-2"><%= t.id %></div>
+              </td>
+              <td>
+                <div style="width: 150px;word-break: break-all;padding-top: 8px;">
+                  <%= t.key %>
+                  <%#= link_to t.key, edit_phrasing_phrase_path(t) %>
+                </div>
+              </td>
+              <td>
+                <%= form_for t, url: phrasing_phrase_path(t) do |f| %>
+                  <%= hidden_field_tag :new_value, t.value, id: "new_text-#{t.id}" %>
+                  <%= hidden_field_tag :klass, "PhrasingPhrase" %>
+                  <%= hidden_field_tag :attribute, 'value' %>
+                  
+                  <p id="<%= "phrase-#{t.id}" %>"
+                    data-textid="<%= "#new_text-#{t.id}" %>"
+                    data-url="<%= phrasing_phrase_path(t) %>"
+                    class="editable mb-0"
+                    contenteditable="true">
+                    <%= t.value %>
+                  </p>
+                <% end %>
+              </td>
+              <td style="width: 200px;"><%= phrasing_preview_links(t.preview_links) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="row alert alert-warning">
+      No Data available.
+    </div>
+  <% end %>

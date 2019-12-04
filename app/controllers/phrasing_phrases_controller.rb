@@ -67,7 +67,7 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   def request_go_live
-    PhrasingJob.perform_later('en')
+    PhrasingJob.perform_later(params[:locale])
     head :ok
   end
 
