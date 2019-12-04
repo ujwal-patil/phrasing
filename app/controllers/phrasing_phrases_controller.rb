@@ -29,30 +29,35 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   def download
-    app_name = Rails.application.class.to_s.split("::").first
-    app_env = Rails.env
     time = Time.now.strftime('%Y_%m_%d_%H_%M_%S')
-    filename = "phrasing_phrases_#{app_name}_#{app_env}_#{time}.yml"
-    send_data Phrasing::Serializer.export_yaml(phrasing_phrases), filename: filename
+
+    filename = "Scalefusion_locale_#{time}.#{params[:locale]}.yml"
+    file = Phrasing::Serializer.export_yaml(PhrasingPhrase.fuzzy_search(params[:search], params[:locale]), filename)
+    send_file file, filename: filename
   end
 
   def upload
-    if authorize_upload_access?
-      number_of_changes = Phrasing::Serializer.import_yaml(File.new(@temp_locale_path))
-      redirect_to(phrasing_phrases_path, notice: "YAML file uploaded successfully! Number of phrases changed: #{number_of_changes}.")
-    else
-      redirect_to(import_export_phrasing_phrases_path, alert: "You can only upload #{accessible_edit_locales.map(&:to_s).join(', ')} .yml files")
-    end
-  rescue => e
-    message = if params[:file].nil?
-      'Please choose a file.'
-    else
-      'Please upload a valid YAML file.'
-    end
+    respond_to do |format|
+      format.js do
+        begin
+          if authorize_upload_access?
+            PhrasingUploadJob.perform_later(@temp_locale_path)
+          else
+            @message = "You can only upload #{accessible_edit_locales.map(&:to_s).join(', ')} .yml files"
+          end
+        rescue => e
+          message = params[:file].nil? ? 'Please choose a file.' : 'Please upload a valid YAML file.'
+          @message = "There was an error processing your upload! #{message}"
+        end
+      end
+      
+      format.html { redirect_to import_export_phrasing_phrases_path, notice: 'Wrong URL entered' }
+    end    
+  end
 
-    redirect_to(import_export_phrasing_phrases_path, alert: "There was an error processing your upload! #{message}")
-  ensure
-    FileUtils.rm(@temp_locale_path, force: true)
+  def upload_status
+    PhrasingPhrase.where(locale: params[:locale]).count
+    render json: {progress: Phrasing.job_status_for('PhrasingUploadJobPercentage'), no_of_changes: Phrasing.job_status_for('PhrasingUploadJobChanges')}
   end
 
   def destroy
@@ -67,21 +72,20 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
   end
 
   def go_live_status
-    hh = {in_progress: Phrasing.request_in_progress?, progress: Phrasing.request_in_progress_status}
-    puts "==============#{hh}"
-    render json: hh
+    render json: {in_progress: Phrasing.job_status_for('phrasing_in_progress'), progress: Phrasing.job_status_for('phrasing_in_progress_status')}
   end
 
   private
 
   def authorize_upload_access?
-    @temp_locale_path = Rails.root.join('tmp/temp_locale.yml')
+    @temp_locale_path = Rails.root.join('tmp/temp_locale.yml').to_s
     File.open(@temp_locale_path, "wb+") do |file|
       file.puts params["file"].tempfile.read
     end
 
     hash = YAML.load(File.new(@temp_locale_path))
-    (accessible_edit_locales.map(&:to_s) & hash.keys) == hash.keys
+    @being_upload = (accessible_edit_locales.map(&:to_s) & hash.keys)
+    @being_upload == hash.keys
   end
 
   def authorize_editor

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       get  :go_live_status
       get  :download
       post :upload
+      get :upload_status
     end
   end
 

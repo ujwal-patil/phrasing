@@ -34,15 +34,23 @@ module Phrasing
         new_hash
       end
 
-      def export_yaml(phrasing_phrases)
+      def export_yaml(phrasing_phrases, file_name)
         hash = {}
         phrasing_phrases.each do |phrase|
           hash[phrase.locale] ||= {}
           hash[phrase.locale][phrase.key] = phrase.value
         end
-        hash.to_yaml
+        hash
+
+        file = Tempfile.new([file_name])
+        File.open(file.path, 'w') do |f| 
+          f.write hash.to_yaml 
+        end
+
+        file
       end
 
     end
   end
 end
+

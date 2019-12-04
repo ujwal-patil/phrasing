@@ -1,15 +1,54 @@
-<div>
-    <% if flash[:alert].present? %>
-        <div class="alert">
-            <%= flash[:alert] %>
-        </div>
-    <% end %>
-    <h2>Import</h2>
-    <p>Upload a YAML (.yml) file following</p>
-    <%= form_tag 'upload', multipart: true, :'accept-charset' => 'UTF-8' do %>
-        <%= file_field_tag "file" %>
-        <%= submit_tag "Upload" %>
-    <% end %>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Import
+            </div>
+            <div class="card-body" id="import-card">
+                <div class="progress mb-3" id="live-process-bar"  style="display: none;" data-locale="">
+                  <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                </div>
 
-    <p><b>Note:</b> You can only upload <%= accessible_edit_locales.map(&:to_s).join(', ') %> .yml files</p>
+                <%= form_tag upload_phrasing_phrases_path, multipart: true, :'accept-charset' => 'UTF-8', remote: true do %>
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
+                            <%= file_field_tag 'file', class: 'custom-file-input', id: "inputGroupFile02" %>
+                           
+                            <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">
+                                Choose valid yml file
+                            </label>
+                        </div>
+                        <div class="input-group-append">
+                            <%= submit_tag "Upload", class: "input-group-text", id: "inputGroupFileAddon02", data: { disable_with: false } %>
+                        </div>
+                    </div>
+                <% end %>
+                <div class="alert alert-warning" role="alert">
+                    <b>Note:</b> You can only upload <%= accessible_edit_locales.map(&:to_s).join(', ') %> .yml files
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Export
+            </div>
+            <div class="card-body">
+                <%= form_tag download_phrasing_phrases_path, method: :get, :'accept-charset' => 'UTF-8' do %>
+                <div class="input-group mb-3">
+                    <%= select_tag(:locale, options_for_select(accessible_edit_locales.map(&:to_s), nil), class: "custom-select", id: "inputGroupSelect02") %>
+                   
+                    <div class="input-group-append">
+                        <%= submit_tag "Download", class: "input-group-text", for: "inputGroupSelect02" %>
+                    </div>
+                </div>
+                <% end %>
+                <div class="alert alert-warning" role="alert">
+                    <b>Note:</b> You can only download <%= accessible_edit_locales.map(&:to_s).join(', ') %> .yml files
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,8 @@
+<% if @message %>
+	$('#live-process-bar').hide();
+	showMessage("<%= @message %>", 'alert-danger')
+<% else %>
+	showProcessBar();
+<% end %>
+
+$('#live-process-bar').data('locale', '<%= @being_upload&.first %>')

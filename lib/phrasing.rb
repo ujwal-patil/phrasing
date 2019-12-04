@@ -68,15 +68,9 @@ module Phrasing
     allow_update_on_all_models_and_attributes == true || whitelist.include?("#{klass}.#{attribute}")
   end
 
-  def self.request_in_progress?
+  def self.job_status_for(key)
     redis_with_try([]) do
-      $redis.with {|conn| conn.lrange('phrasing_in_progress', 0 , 0)}
-    end.first
-  end
-
-  def self.request_in_progress_status
-    redis_with_try([]) do
-      $redis.with {|conn| conn.lrange('phrasing_in_progress_status', 0 , 0)}
+      $redis.with {|conn| conn.lrange(key, 0 , 0)}
     end.first
   end
 
