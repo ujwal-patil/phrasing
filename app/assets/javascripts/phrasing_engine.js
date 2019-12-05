@@ -5,6 +5,12 @@
 $(document).ready(function(){
 	$("#request-live").on('click', requestLive);
 
+	$('#inputGroupFile02').on('change', function(){
+		var selectedFile = this.value.split('\\');
+		var fileName = selectedFile[selectedFile.length - 1];
+		$('label[for=inputGroupFile02]')[0].innerText = fileName ? fileName : 'Choose valid yml file';
+	});
+
 	$(".editable").on('focusout', function (event) {
 		var element = $(this),
 		  hiddenEle = $(this.dataset.textid);
