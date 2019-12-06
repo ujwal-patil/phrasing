@@ -14,7 +14,7 @@ $phrasing-edit-mode-bubble-paragraph-font-size: 14px;
   border: 2px solid #EFEFEF;
   position: fixed;
   width:130px;
-  height:135px;
+  height:max-content;
   bottom:10px;
   right:10px;
   z-index: 9999;
@@ -31,11 +31,11 @@ $phrasing-edit-mode-bubble-paragraph-font-size: 14px;
   }
   ::selection{ color: grey;  background: white; }
 
-  #phrasing-edit-mode, #phrasing-saved-status, #phrasing-edit-all-phrases{
+  #phrasing-edit-mode, #phrasing-saved-status, #phrasing-edit-all-phrases, #phrasing-edit-this-page-meta{
     height:32px;
     margin-top:10px;
   }
-  #phrasing-edit-mode-headline, #phrasing-edit-all-phrases-headline, #phrasing-saved-status-headline{
+  #phrasing-edit-mode-headline, #phrasing-edit-all-phrases-headline, #phrasing-edit-this-page-meta-headline, #phrasing-saved-status-headline{
     p{
       display: inline;
     }
@@ -136,6 +136,21 @@ $phrasing-edit-mode-bubble-paragraph-font-size: 14px;
   #phrasing-edit-all-phrases-icon-container{
     float:left;
     .phrasing-edit-all-phrases-icon{
+      margin-left:10px;
+      margin-top:7px;
+    }
+  }
+
+  #phrasing-edit-this-page-meta-headline{
+    height:30px;
+    width:45px;
+    float:left;
+    padding-left:15px;
+    padding-top:5px;
+  }
+  #phrasing-edit-this-page-meta-icon-container{
+    float:left;
+    .phrasing-edit-this-page-meta-icon{
       margin-left:10px;
       margin-top:7px;
     }

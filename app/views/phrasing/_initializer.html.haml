@@ -32,3 +32,9 @@
         %p Edit all
       #phrasing-edit-all-phrases-icon-container
         = link_to image_tag("phrasing_icon_edit_all.png", class: 'phrasing-edit-all-phrases-icon'), phrasing_phrases_path, data: { no_turbolink: true }, class: "phrasing-edit-all-phrases-link"
+    - if Phrasing.editable_meta_enable
+      #phrasing-edit-this-page-meta
+        #phrasing-edit-this-page-meta-headline
+          %p Meta
+        #phrasing-edit-this-page-meta-icon-container
+          = link_to image_tag("phrasing_icon_edit_all.png", class: 'phrasing-edit-this-page-meta-icon'), edit_meta_path, data: { no_turbolink: true }, class: "phrasing-edit-this-page-meta-link"

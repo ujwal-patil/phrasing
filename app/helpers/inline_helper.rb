@@ -18,6 +18,17 @@ module InlineHelper
     render('phrasing/phrasing_initializer')
   end
 
+  def edit_meta_path
+    if request.path == '/'
+      '/meta'
+    elsif params[:locale].nil?
+      "/meta#{request.path}"
+    else
+      lregex = Regexp.new(I18n.available_locales.excluding(:en).map{|m| "\/#{m}\/|\/#{m}"}.join('|'))
+      request.path.sub(lregex, '/meta/')
+    end
+  end
+
   def t(key)
     if can_edit_phrases? && !blacklisted_file_keys.include?("#{I18n.locale}.#{key}") && !Phrasing.blacklisted_keys_for_inline_edit.any?{|m| key.start_with?(m)}
       phrase(key)

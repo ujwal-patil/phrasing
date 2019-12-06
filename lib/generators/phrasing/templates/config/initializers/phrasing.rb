@@ -28,6 +28,6 @@ Phrasing.setup do |config|
 
   # whitelisted_keys_section_for_remover - The keys starting with specified strings
   # will not considered as useless keys, remover script will keep such keys as it is
-  config.whitelisted_keys_section_for_remover = %w(activerecord)
+  config.whitelisted_keys_section_for_remover = %w(activerecord meta)
 
 end

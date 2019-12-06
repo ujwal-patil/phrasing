@@ -20,6 +20,16 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
     @locale_names = PhrasingPhrase.distinct.pluck(:locale)
   end
 
+  def meta
+    params[:locale] ||= I18n.default_locale
+    @phrasing_phrases = PhrasingPhrase.fuzzy_search(params[:search], params[:locale], "meta.#{current_page_meta_path}").page(params[:page]).per(params[:per_page] || 100)
+  end
+
+  def current_page_meta_path
+    @route_path_and_ca ||= Rails.application.routes.routes.map{|r| [r.path.spec.to_s, r.defaults.slice(:controller, :action).values.join('.')]}.to_h
+    @route_path_and_ca.find{|key, value|  key.end_with?("#{params[:path]}(.:format)")}.last
+  end
+
   def edit
     @phrasing_phrase = PhrasingPhrase.find(params[:id])
   end

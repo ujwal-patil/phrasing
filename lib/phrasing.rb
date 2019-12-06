@@ -45,6 +45,8 @@ module Phrasing
   mattr_accessor :whitelisted_keys_section_for_remover
   @@whitelisted_keys_section_for_remover = %w()
 
+  mattr_accessor :editable_meta_enable
+  @@editable_meta_enable = true
 
   def self.setup
     yield self
