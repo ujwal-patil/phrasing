@@ -64,12 +64,17 @@ module Phrasing
         print "\b" * 50, "Progress: #{percentage}% - #{index + 1}/#{_keys_and_values.length} ", pinwheel.rotate!.first
 
         _key = key.to_s.split('.')[1..-1] * '.'
+        next if whitelisted?(_key)
         phrasing_phrases.find_or_initialize_by(key:  _key).tap do |pp|
           pp.value = value
           pp.save
         end
       end
       puts 'Done.'
+    end
+
+    def whitelisted?(key)
+      Phrasing.whitelisted_keys_section_for_remover.any?{|m| key.start_with?(m)}
     end
 
     def update_as_next_root_version(keys_and_values)

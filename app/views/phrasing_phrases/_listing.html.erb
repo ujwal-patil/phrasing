@@ -1,5 +1,5 @@
   <div class="alert alert-dark filters row">
-    <%= form_tag phrasing_phrases_path, method: :get, class: "form-inline col-md-9 p-0" do %>
+    <%= form_tag request.path, method: :get, class: "form-inline col-md-9 p-0" do %>
       <% locale_options = options_for_select(accessible_edit_locales.map(&:to_s).map{|l| [l,l]}, params[:locale]) %>
       <div class="form-group">
         <%= select_tag 'locale', locale_options, class: "custom-select"  %>

@@ -28,6 +28,14 @@ Phrasing.setup do |config|
 
   # whitelisted_keys_section_for_remover - The keys starting with specified strings
   # will not considered as useless keys, remover script will keep such keys as it is
-  config.whitelisted_keys_section_for_remover = %w(activerecord meta)
+  config.whitelisted_keys_section_for_remover = %w(activerecord)
 
+  # Enable meta editing
+  config.editable_meta_enable = true
+
+  # add your meta section key here <locale_name(en|fr)>.<root_meta_key>.<controller_name>.<action_name>.<meta_key>
+  config.meta_section_root_key = 'meta'
+
+  # While inline edit, you will see a previous text popover
+  config.previous_text_popover = true
 end

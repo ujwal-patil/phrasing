@@ -62,6 +62,9 @@ module Phrasing
     def whitelisted?(key)
       _key = key.gsub("#{@locale}.", "")
 
+      # Whitelist configured meta key
+      return true if _key.start_with?(Phrasing.meta_section_root_key)
+      
       (Phrasing.whitelisted_keys_section_for_remover + iterated_section_keys).any?{|m| _key.start_with?(m)}
     end
 

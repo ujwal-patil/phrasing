@@ -48,6 +48,9 @@ module Phrasing
   mattr_accessor :editable_meta_enable
   @@editable_meta_enable = true
 
+  mattr_accessor :meta_section_root_key
+  @@meta_section_root_key = 'meta'
+
   def self.setup
     yield self
   end
