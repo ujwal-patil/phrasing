@@ -31,7 +31,7 @@ Phrasing.setup do |config|
   config.whitelisted_keys_section_for_remover = %w(activerecord)
 
   # Enable meta editing
-  config.editable_meta_enable = true
+  config.editable_meta_enable = false
 
   # add your meta section key here <locale_name(en|fr)>.<root_meta_key>.<controller_name>.<action_name>.<meta_key>
   config.meta_section_root_key = 'meta'
