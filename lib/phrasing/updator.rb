@@ -151,7 +151,7 @@ module Phrasing
     end
 
     def fetch_current_file_version
-      current_locale_file_path.scan(/v[0-9]*/).first || 'v1'
+      current_locale_file_path.gsub(Phrasing.locale_file_path.to_s, '').scan(/v[0-9]*/).first || 'v1'
     end
 
     def load_locale_file(file_path)
