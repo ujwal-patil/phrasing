@@ -8,8 +8,10 @@ class PhrasingBaseJob < ApplicationJob
   		puts "command=================#{cmd}, percentage: #{percentage}"
 
   		if cmd.start_with?('phrasing_do_update')
+        puts "start_with if================="
         handle_file_update(cmd)
   		else
+        puts "start_with else================="
     		handle_system_command(cmd)
   		end
   	end
@@ -23,6 +25,8 @@ class PhrasingBaseJob < ApplicationJob
 
   def handle_file_update(cmd)
     updator_status = Phrasing::Updator.new(cmd.split(':').last).update_files
+    puts "handle_file_update======#{cmd}, updator_status: #{updator_status}"
+
     if updator_status == false
       add_status('phrasing_in_progress_status', 100)
       add_status('phrasing_in_progress', false)
