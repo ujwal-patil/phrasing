@@ -15,7 +15,7 @@ module PhrasingInternalHelper
 
   def find_key(meta_key)
     begin
-      I18n.t("#{Phrasing.meta_section_root_key}.#{action_name}.#{meta_key}", raise: true)
+      I18n.t("#{Phrasing.meta_section_root_key}.#{controller_name}.#{action_name}.#{meta_key}", raise: true)
     rescue I18n::MissingTranslationData => e
       I18n.t("#{Phrasing.meta_section_root_key}.#{meta_key}")
     end
