@@ -75,7 +75,7 @@ function requestLive(){
 	  	    	disableFilters(false);
 
 		  			if (response.progress == 100) {
-		  				showMessage('Requested Successfully, Please note Added Words: '+response.added_words+', Removed Words: '+response.removed_words, 'alert-success');
+		  				showSuccess(response);
 		  				timeoutProgress();
 		  			}
 		  	  }
@@ -94,6 +94,15 @@ function requestLive(){
 				processBar.hide();
 				message.hide();
 			}, 5000);
+		}
+
+		function showSuccess(response){
+			if (response.added_words || response.removed_words) {
+				showMessage('Requested Successfully, Please note Added Words: '+response.added_words+', Removed Words: '+response.removed_words, 'alert-success');
+			}
+			else{
+				showMessage('Sorry, We could not detect any changes in translations.', 'alert-success');
+			}
 		}
 
 		function showProgressBarMessage(messageText, klass){
