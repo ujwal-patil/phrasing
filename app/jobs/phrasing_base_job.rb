@@ -9,10 +9,10 @@ class PhrasingBaseJob < ApplicationJob
 
   		if cmd.start_with?('phrasing_do_update')
         puts "start_with if================="
-        handle_file_update(cmd)
+        handle_file_update(cmd, percentage)
   		else
         puts "start_with else================="
-    		handle_system_command(cmd)
+    		handle_system_command(cmd, percentage)
   		end
   	end
 
@@ -23,7 +23,7 @@ class PhrasingBaseJob < ApplicationJob
     Rails.logger.error("PhrasingBaseJob :: request_script :: Exception : #{e.message}")
   end
 
-  def handle_file_update(cmd)
+  def handle_file_update(cmd, percentage)
     updator_status = Phrasing::Updator.new(cmd.split(':').last).update_files
     puts "handle_file_update======#{cmd}, updator_status: #{updator_status}"
 
@@ -36,7 +36,7 @@ class PhrasingBaseJob < ApplicationJob
     end
   end
 
-  def handle_system_command(cmd)
+  def handle_system_command(cmd, percentage)
     if system(cmd)
       add_status('phrasing_in_progress_status', percentage)
     else
