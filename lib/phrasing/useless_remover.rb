@@ -2,7 +2,6 @@ module Phrasing
   class UselessRemover
     def initialize(locale)
       @locale = locale.to_s
-      @detector = WhatLanguage.new(:all)
     end
 
     # Phrasing::UselessRemover.new(:fr).extract
@@ -10,24 +9,34 @@ module Phrasing
     # This will usefull to get only keys and values where you need to work on
     # Phrasing::UselessRemover.new(:fr).extract this will create extracted.fr.yml
     # where all keys are not yet translated in french, you can translate it and merge it by import
-    def extract
+    def extract(from_rake=false)
       _keys_and_values = {}
       pinwheel = %w{ | / - \\ }
 
-      full_keys_and_values = load_locale_file
-      puts "Checking #{full_keys_and_values.length} keys..."
+      # 1) Load english locale keys and values
+      english_full_keys_and_values = load_locale_file('en')
 
-      full_keys_and_values.each_with_index do |(key, value), index|
-        percentage = ((index + 1).to_f / full_keys_and_values.length * 100).to_i
-        print "\b" * 50, "Progress: #{percentage}% - #{index + 1}/#{full_keys_and_values.length} ", pinwheel.rotate!.first
+      # 2) Load current locale keys and values
+      locale_full_keys_and_values = load_locale_file
 
-        if non_english?(value)
+      # Iterate english 
+      puts "Checking #{english_full_keys_and_values.length} keys..."
+      english_full_keys_and_values.each_with_index do |(key, value), index|
+        percentage = ((index + 1).to_f / english_full_keys_and_values.length * 100).to_i
+        print "\b" * 50, "Progress: #{percentage}% - #{index + 1}/#{english_full_keys_and_values.length} ", pinwheel.rotate!.first
+
+        # If other locale value is not present OR if have same value with english
+        if locale_full_keys_and_values[key].nil? || locale_full_keys_and_values[key] == value
           _keys_and_values[key] = value
         end
       end
 
-      keys_and_values_to_yml(_keys_and_values, File.join(Phrasing.locale_file_path, "extracted.#{@locale}.yml"))
-      puts 'Done.'
+      if !from_rake
+        keys_and_values_to_yml(_keys_and_values, File.join(Phrasing.locale_file_path, "extracted.#{@locale}.yml"))
+        puts 'Done.'
+      else
+        _keys_and_values
+      end
     end
 
     # Phrasing::UselessRemover.new(:fr).remove
@@ -54,10 +63,6 @@ module Phrasing
     end
 
     private
-
-    def non_english?(value)
-      !['english', ''].include?(@detector.language(value).to_s)
-    end
 
     def whitelisted?(key)
       _key = key.gsub("#{@locale}.", "")
@@ -112,19 +117,19 @@ module Phrasing
       end
     end
 
-    def load_locale_file
-      return {} unless File.exist?(current_locale_file_path)
+    def load_locale_file(locale = nil)
+      return {} unless File.exist?(current_locale_file_path(locale))
 
       keys_and_values = {}
-      traverse(YAML.load_file(current_locale_file_path)) do |keys, value|
+      traverse(YAML.load_file(current_locale_file_path(locale))) do |keys, value|
         keys_and_values[keys * '.'] = value
       end
 
       keys_and_values
     end
 
-    def current_locale_file_path
-      @file ||= Dir[File.join(Phrasing.locale_file_path, "*root.#{@locale}.yml")].last
+    def current_locale_file_path(locale = nil)
+      Dir[File.join(Phrasing.locale_file_path, "*root.#{locale || @locale}.yml")].last
     end
 
     def traverse(obj, keys = [], &block)

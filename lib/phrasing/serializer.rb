@@ -40,11 +40,21 @@ module Phrasing
           hash[phrase.locale] ||= {}
           hash[phrase.locale][phrase.key] = phrase.value
         end
-        hash
 
         file = Tempfile.new([file_name])
         File.open(file.path, 'w') do |f| 
           f.write hash.to_yaml 
+        end
+
+        file
+      end
+
+      def export_delta_yaml(locale, file_name)
+        extracted_keys_and_values = Phrasing::UselessRemover.new(locale).extract(true)
+
+        file = Tempfile.new([file_name])
+        File.open(file.path, 'w') do |f| 
+          f.write extracted_keys_and_values.to_yaml 
         end
 
         file

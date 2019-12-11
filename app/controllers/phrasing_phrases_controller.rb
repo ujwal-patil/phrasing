@@ -52,10 +52,16 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
 
   def download
     time = Time.now.strftime('%Y_%m_%d_%H_%M_%S')
-
-    filename = "Scalefusion_locale_#{time}.#{params[:locale]}.yml"
-    file = Phrasing::Serializer.export_yaml(PhrasingPhrase.fuzzy_search(params[:search], params[:locale]), filename)
-    send_file file, filename: filename
+    
+    if params[:export_f].present?
+      filename = "Scalefusion_locale_full_#{time}.#{params[:locale]}.yml"
+      file = Phrasing::Serializer.export_yaml(PhrasingPhrase.fuzzy_search(params[:search], params[:locale]), filename)
+      send_file file, filename: filename
+    elsif params[:export_d].present?
+      filename = "Scalefusion_locale_delta_#{time}.#{params[:locale]}.yml"
+      file = Phrasing::Serializer.export_delta_yaml(params[:locale], filename)
+      send_file file, filename: filename
+    end
   end
 
   def upload

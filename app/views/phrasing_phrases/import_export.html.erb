@@ -41,7 +41,11 @@
                     <%= select_tag(:locale, options_for_select(accessible_edit_locales.map(&:to_s), nil), class: "custom-select", id: "inputGroupSelect02") %>
                    
                     <div class="input-group-append">
-                        <%= submit_tag "Download", class: "input-group-text", for: "inputGroupSelect02" %>
+                        <%= submit_tag "Download Full", name: 'export_f', class: "input-group-text", for: "inputGroupSelect02", data: { disable_with: false } %>
+                    </div>
+
+                    <div class="input-group-append">
+                        <%= submit_tag "Download Delta With en", name: 'export_d', class: "input-group-text", for: "inputGroupSelect02", data: { disable_with: false } %>
                     </div>
                 </div>
                 <% end %>
