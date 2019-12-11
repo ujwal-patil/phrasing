@@ -28,9 +28,9 @@ module Phrasing
           print "."
           next if phrase.key == phrase.value
 
-          @word_counter.update(keys_and_values["#{phrase.locale}.#{phrase.key}"], phrase.value)
+          @word_counter.update(keys_and_values["#{phrase.locale}.#{phrase.key}"], phrase.yml_value)
 
-          keys_and_values["#{phrase.locale}.#{phrase.key}"] = phrase.value
+          keys_and_values["#{phrase.locale}.#{phrase.key}"] = phrase.yml_value
         end
 
         # 3) Update keys_and_values to same yml file

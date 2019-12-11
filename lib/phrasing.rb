@@ -51,6 +51,9 @@ module Phrasing
   mattr_accessor :meta_section_root_key
   @@meta_section_root_key = 'meta'
 
+  mattr_accessor :branding_site_title
+  @@branding_site_title = ''
+
   def self.setup
     yield self
   end

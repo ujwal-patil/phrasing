@@ -38,4 +38,7 @@ Phrasing.setup do |config|
 
   # While inline edit, you will see a previous text popover
   config.previous_text_popover = true
+
+  # Add your site_title name here if you wants to enable dyanabmic brand site title
+  config.branding_site_title = 'Scalefusion'
 end

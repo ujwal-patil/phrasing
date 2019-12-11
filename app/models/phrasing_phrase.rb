@@ -8,6 +8,24 @@ class PhrasingPhrase < ActiveRecord::Base
 
   after_update :version_it
 
+  def yml_value
+    if Phrasing.branding_site_title.present?
+      value.gsub(/#{Phrasing.branding_site_title}/, "%{site_title}")
+      .gsub(/#{Phrasing.branding_site_title.downcase}/, "%{site_title_downcase}")
+    else
+      value
+    end
+  end
+
+  def value=(val)
+    if Phrasing.branding_site_title.present?
+      val = val.gsub(/%{site_title}/, Phrasing.branding_site_title)
+        .gsub(/%{site_title_downcase}/, Phrasing.branding_site_title.downcase)
+    end
+
+    super(val)
+  end
+
   def self.find_phrase(key)
     where(key: key, locale: I18n.locale.to_s).first || search_i18n_and_create_phrase(key)
   end
