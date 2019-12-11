@@ -4,6 +4,7 @@ class ActionDispatch::Routing::Mapper
     if Phrasing.editable_meta_enable
       match '/meta/*path', to: 'phrasing_phrases#meta', via: :all
       get '/meta' => 'phrasing_phrases#meta'
+      get  "/#{Phrasing.route}/download" => 'phrasing_phrases#download'
 
       scope "(:meta)" do
         yield
