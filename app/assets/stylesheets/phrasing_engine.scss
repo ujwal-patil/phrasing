@@ -1,6 +1,6 @@
 .main{
   margin-top: 56px;
-  padding-top: 25px;
+  padding: 15px 0px;
 }
 
 .table {
@@ -21,6 +21,7 @@ p[contenteditable=true]:hover:not(:focus) {
   background-color: white;
   top: 66px;
   position: sticky;
+  z-index: 99;
 }
 
 .success{

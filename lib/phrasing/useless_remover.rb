@@ -4,52 +4,6 @@ module Phrasing
       @locale = locale.to_s
     end
 
-    # Phrasing::UselessRemover.new(:fr).extract
-    # This will extract the values which are not yet translated
-    # This will usefull to get only keys and values where you need to work on
-    # Phrasing::UselessRemover.new(:fr).extract this will create extracted.fr.yml
-    # where all keys are not yet translated in french, you can translate it and merge it by import
-    def extract
-      _keys_and_values = {}
-      pinwheel = %w{ | / - \\ }
-
-      # 1) Load english locale keys and values
-      english_full_keys_and_values = single_rooted(load_locale_file('en'))
-
-      # 2) Load current locale keys and values
-      locale_full_keys_and_values = single_rooted(load_locale_file)
-      # Iterate english 
-      english_full_keys_and_values.each do |locale, data|
-        puts "Checking #{data.length} keys..."
-        data.each_with_index do |(key, value), index|
-          percentage = ((index + 1).to_f / data.length * 100).to_i
-          print "\b" * 50, "Progress: #{percentage}% - #{index + 1}/#{data.length} ", pinwheel.rotate!.first
-          # If other locale value is not present OR if have same value with english
-          if locale_full_keys_and_values[@locale][key].nil? || locale_full_keys_and_values[@locale][key] == value
-            _keys_and_values[@locale] ||= {}
-            _keys_and_values[@locale][key] = value
-          end
-        end
-      end
-
-      puts 'Done.'
-      _keys_and_values
-    end
-
-    def single_rooted(full_keys_and_values)
-      locale_regex = Regexp.new("^(#{I18n.available_locales.join('|')})")
-      hash = {}
-      full_keys_and_values.each do |key, value|
-        current_locale = key.match(locale_regex)[0]
-
-        _key = key.split('.')[1..-1] * '.'
-
-        hash[current_locale] ||= {}
-        hash[current_locale][_key] = value
-      end
-      hash
-    end
-
     # Phrasing::UselessRemover.new(:fr).remove
     # This will remove all keys which are not in use, based on the lookup result in your specified Phrasing.search_directory_path
     # Also update the root.fr.yml file by removing useless keys

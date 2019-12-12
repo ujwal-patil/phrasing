@@ -1,23 +1,22 @@
   <div class="alert alert-dark filters row">
-    <%= form_tag request.path, method: :get, class: "form-inline col-md-9 p-0" do %>
-      <% locale_options = options_for_select(accessible_edit_locales.map(&:to_s).map{|l| [l,l]}, params[:locale]) %>
-      <div class="form-group">
-        <%= select_tag 'locale', locale_options, class: "custom-select"  %>
-      </div>
-      <div class="form-group mx-sm-3">
-        <!-- <label for="inputPassword2" class="sr-only">Password</label> -->
-        <%= text_field_tag :search, params[:search], placeholder: 'Search for keys or values', class: 'form-control' %>
-      </div>
-      
-      <%= submit_tag 'Search', class: "btn btn-primary mr-2", data: { disable_with: false } %>
-      <%#= link_to 'Download', download_phrasing_phrases_path(search: params[:search], locale: params[:locale]), class: 'btn btn-success mb-2 mr-2' %>
-      <%= link_to_previous_page @phrasing_phrases, 'Previous Page', class: "btn btn-outline-primary mr-2" %>
-      <%= link_to_next_page @phrasing_phrases, 'Next Page', class: "btn btn-outline-primary mr-2"  %>
-      
-      <% if @phrasing_phrases.present? %>
-        <%= button_tag 'Request Go Live' , type: 'button', class: "btn btn-outline-success mr-2 float-right", 'data-path': request_go_live_phrasing_phrases_path(locale: params[:locale]), id: 'request-live'  %>
+    <div class="col-md-9 p-0">
+      <%= form_tag request.path, method: :get, class: "form-inline" do %>
+        <% locale_options = options_for_select(accessible_edit_locales.map(&:to_s).map{|l| [l,l]}, params[:locale]) %>
+        <div class="form-group">
+          <%= select_tag 'locale', locale_options, class: "custom-select"  %>
+        </div>
+        <div class="form-group mx-sm-3">
+          <!-- <label for="inputPassword2" class="sr-only">Password</label> -->
+          <%= text_field_tag :search, params[:search], placeholder: 'Search for keys or values', class: 'form-control' %>
+        </div>
+        
+        <%= submit_tag 'Search', class: "btn btn-primary mr-2", data: { disable_with: false } %>
+       
+        <% if @phrasing_phrases.present? %>
+          <%= button_tag 'Request Go Live' , type: 'button', class: "btn btn-outline-success mr-2 float-right", 'data-path': request_go_live_phrasing_phrases_path(locale: params[:locale]), id: 'request-live'  %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
     <div class="col-md-3 p-0">
       <div class="progress mt-2" id="live-process-bar" style="display: none;">
         <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
@@ -26,6 +25,13 @@
       <p class="m-0 pt-2 text-center" id="rq-message" style="display: none;">Successfully Requested</p>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-12 p-0">
+      <%= paginate @phrasing_phrases, theme: 'twitter-bootstrap-4', pagination_class: "pagination-sm float-right" %>
+    </div>
+  </div>
+
   <% if @phrasing_phrases.present? %>
     <div class="row">
       <table class="table table-hover">
