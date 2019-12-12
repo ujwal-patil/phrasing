@@ -2,6 +2,11 @@ class PhrasingUploadJob < ApplicationJob
 	queue_as :default
 
   def perform(*args)
+  	unless File.exist?(args.first)
+  		Rails.logger.info("PhrasingUploadJob : no file exist : #{args.first}")
+  		return 
+  	end
+
   	file = File.new(args.first)
     number_of_changes = 0
     hash = YAML.load(file)

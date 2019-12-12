@@ -50,9 +50,19 @@ module Phrasing
       end
 
       def export_delta_yaml(locale, file_name)
+        hash = {}
+        other_phrases = PhrasingPhrase.locale(locale).pluck(:key, :value).to_h
+        
+        PhrasingPhrase.locale.each do |en_phrase|
+          if other_phrases[en_phrase.key].nil? || other_phrases[en_phrase.key] == en_phrase.value
+            hash[locale] ||= {}
+            hash[locale][en_phrase.key] = en_phrase.value
+          end
+        end
+
         file = Tempfile.new([file_name])
         File.open(file.path, 'w') do |f| 
-          f.write Phrasing::UselessRemover.new(locale).extract.to_yaml 
+          f.write hash.to_yaml
         end
 
         file

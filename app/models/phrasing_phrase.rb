@@ -8,6 +8,10 @@ class PhrasingPhrase < ActiveRecord::Base
 
   after_update :version_it
 
+  scope :locale, ->(locale_code = 'en'){
+    where(locale: locale_code)
+  }
+
   def yml_value
     if Phrasing.branding_site_title.present?
       value.gsub(/#{Phrasing.branding_site_title}/, "%{site_title}")
