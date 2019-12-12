@@ -50,16 +50,13 @@ module Phrasing
       end
 
       def export_delta_yaml(locale, file_name)
-        extracted_keys_and_values = Phrasing::UselessRemover.new(locale).extract(true)
-
         file = Tempfile.new([file_name])
         File.open(file.path, 'w') do |f| 
-          f.write extracted_keys_and_values.to_yaml 
+          f.write Phrasing::UselessRemover.new(locale).extract.to_yaml 
         end
 
         file
       end
-
     end
   end
 end

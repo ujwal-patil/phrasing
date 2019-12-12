@@ -71,7 +71,7 @@ class PhrasingPhrasesController < Phrasing.parent_controller.constantize
           if authorize_upload_access?
             PhrasingUploadJob.perform_later(@temp_locale_path)
           else
-            @message = "You can only upload #{accessible_edit_locales.map(&:to_s).join(', ')} .yml files"
+            @message = "Please upload a valid #{accessible_edit_locales.map(&:to_s).join(', ')} .yml file."
           end
         rescue => e
           message = params[:file].nil? ? 'Please choose a file.' : 'Please upload a valid YAML file.'
