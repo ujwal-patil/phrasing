@@ -23,7 +23,7 @@ module Phrasing
         end
       end
 
-      keys_and_values_to_yml(_keys_and_values)
+      keys_and_values_to_yml(_keys_and_values.sort.to_h)
       puts 'Done.'
     end
 
