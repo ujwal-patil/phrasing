@@ -53,7 +53,7 @@ module Phrasing
       return @iterated_section_keys unless @iterated_section_keys.blank?
 
       str_grep_by_method = ['keys', 'each'].map do |method|
-        `grep -orh ".t([:a-zA-Z_.-'\\"]*).#{method}" app`
+        `grep -orh "t([:a-zA-Z_.-'\\"0-9]*).#{method}" app`
       end.join
 
       @iterated_section_keys = str_grep_by_method.scan(Regexp.union(/'[a-zA-Z_.-]*'/, /"[a-zA-Z_.-]*"/)).map{|m| m.gsub(/"|'/, '')}
