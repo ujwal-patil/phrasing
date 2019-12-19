@@ -56,7 +56,7 @@ module Phrasing
         `grep -orh "t([:a-zA-Z_.-'\\"0-9]*).#{method}" app`
       end.join
 
-      @iterated_section_keys = str_grep_by_method.scan(Regexp.union(/'[a-zA-Z_.-]*'/, /"[a-zA-Z_.-]*"/)).map{|m| m.gsub(/"|'/, '')}
+      @iterated_section_keys = str_grep_by_method.scan(Regexp.union(/'[a-zA-Z0-9_.-]*'/, /"[a-zA-Z0-9_.-]*"/)).map{|m| m.gsub(/"|'/, '')}
     end
 
     def keys_and_values_to_yml(keys_and_values, file_path = nil)
