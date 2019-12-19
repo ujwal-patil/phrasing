@@ -1,7 +1,7 @@
   <div class="alert alert-dark filters row">
     <div class="col-md-9 p-0">
       <%= form_tag request.path, method: :get, class: "form-inline" do %>
-        <% locale_options = options_for_select(accessible_edit_locales.map(&:to_s).map{|l| [l,l]}, params[:locale]) %>
+        <% locale_options = options_for_select((I18n.available_locales.map(&:to_s) & accessible_edit_locales).map(&:to_s).map{|l| [l,l]}, params[:locale]) %>
         <div class="form-group">
           <%= select_tag 'locale', locale_options, class: "custom-select"  %>
         </div>

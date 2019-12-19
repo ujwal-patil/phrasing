@@ -35,7 +35,7 @@ module Phrasing
       # Whitelist configured meta key
       return true if _key.start_with?(Phrasing.meta_section_root_key)
       
-      (Phrasing.whitelisted_keys_section_for_remover + iterated_section_keys).any?{|m| _key.start_with?(m)}
+      (Phrasing.whitelisted_keys_section_for_remover + iterated_section_keys.uniq).any?{|m| _key.start_with?(m)}
     end
 
     def grep_result_exist?(key)
