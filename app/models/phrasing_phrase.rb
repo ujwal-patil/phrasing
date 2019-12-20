@@ -13,7 +13,7 @@ class PhrasingPhrase < ActiveRecord::Base
   }
 
   def yml_value
-    if Phrasing.branding_site_title.present?
+    if Phrasing.branding_site_title.present? && value.present? && value.is_a?(String)
       value.gsub(/#{Phrasing.branding_site_title}/, "%{site_title}")
       .gsub(/#{Phrasing.branding_site_title.downcase}/, "%{site_title_downcase}")
     else
@@ -22,7 +22,7 @@ class PhrasingPhrase < ActiveRecord::Base
   end
 
   def value=(val)
-    if Phrasing.branding_site_title.present?
+    if Phrasing.branding_site_title.present? && val.present? && val.is_a?(String)
       val = val.gsub(/%{site_title}/, Phrasing.branding_site_title)
         .gsub(/%{site_title_downcase}/, Phrasing.branding_site_title.downcase)
     end
