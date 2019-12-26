@@ -6,7 +6,7 @@ class ActionDispatch::Routing::Mapper
       get '/meta' => 'phrasing_phrases#meta'
       get  "/#{Phrasing.route}/download" => 'phrasing_phrases#download'
 
-      scope "(:meta)" do
+      scope "(:meta)", meta: /meta/ do
         yield
       end
     else
