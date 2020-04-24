@@ -15,8 +15,16 @@ module PhrasingInternalHelper
 
   def find_key(meta_key)
     begin
-      I18n.t("#{Phrasing.meta_section_root_key}.#{controller_name}.#{action_name}.#{meta_key}", raise: true)
+      if params[:page].present?
+        I18n.t("#{Phrasing.meta_section_root_key}.#{controller_name}.#{action_name}.#{params[:page]}.#{meta_key}", raise: true)
+      else
+        I18n.t("#{Phrasing.meta_section_root_key}.#{controller_name}.#{action_name}.#{meta_key}", raise: true)
+      end
     rescue I18n::MissingTranslationData => e
+      if Rails.env.development?
+        Rails.logger.error(ActiveSupport::LogSubscriber.new.send(:color, "Meta Missing : #{e.message}", :red))
+      end
+
       I18n.t("#{Phrasing.meta_section_root_key}.#{meta_key}")
     end
   end
